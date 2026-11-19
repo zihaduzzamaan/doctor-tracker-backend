@@ -15,7 +15,7 @@ export const doctorInputSchema = z.object({
 
 export async function getDoctors(req: Request, res: Response): Promise<void> {
   try {
-    const { search, specialization, hospital, page = '1', limit = '10' } = req.query;
+    const { search, specialization, hospital, startDate, endDate, page = '1', limit = '10' } = req.query;
 
     const query: Record<string, any> = {};
 
@@ -29,6 +29,16 @@ export async function getDoctors(req: Request, res: Response): Promise<void> {
 
     if (hospital && typeof hospital === 'string' && hospital !== 'all') {
       query.hospital = hospital;
+    }
+
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) query.createdAt.$gte = new Date(startDate as string);
+      if (endDate) {
+        const end = new Date(endDate as string);
+        end.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
     }
 
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);

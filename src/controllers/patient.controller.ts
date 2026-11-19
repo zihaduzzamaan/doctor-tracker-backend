@@ -37,7 +37,7 @@ export async function getPatients(req: Request, res: Response): Promise<void> {
     }
 
     if (condition && typeof condition === 'string' && condition !== 'all') {
-      query.condition = condition;
+      query.condition = { $regex: condition.trim(), $options: 'i' };
     }
 
     if (search && typeof search === 'string' && search.trim()) {
@@ -47,7 +47,11 @@ export async function getPatients(req: Request, res: Response): Promise<void> {
     if (startDate || endDate) {
       query.admission_date = {};
       if (startDate) query.admission_date.$gte = new Date(startDate as string);
-      if (endDate) query.admission_date.$lte = new Date(endDate as string);
+      if (endDate) {
+        const end = new Date(endDate as string);
+        end.setHours(23, 59, 59, 999);
+        query.admission_date.$lte = end;
+      }
     }
 
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
