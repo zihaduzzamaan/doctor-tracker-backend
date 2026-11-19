@@ -8,7 +8,7 @@ export const patientInputSchema = z.object({
   doctor_id: z.string().min(1, 'Assigned doctor is required'),
   patient_name: z.string().min(2, 'Patient name is required'),
   age: z.number().int().min(0).max(150),
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.preprocess((val) => (typeof val === 'string' ? val.toLowerCase() : val), z.enum(['male', 'female', 'other'])),
   phone: z.string().min(3).optional().default('+1 (555) 010-0000'),
   condition: z.string().min(2, 'Diagnosis/condition is required'),
   status: z
