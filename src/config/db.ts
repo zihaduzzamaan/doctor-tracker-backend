@@ -6,6 +6,7 @@ export async function connectDB(uri?: string): Promise<void> {
   try {
     const conn = await mongoose.connect(mongoURI, {
       autoIndex: true,
+      serverSelectionTimeoutMS: 15000,
     });
     console.log(`[MongoDB] Connected successfully to host: ${conn.connection.host}`);
   } catch (error) {
