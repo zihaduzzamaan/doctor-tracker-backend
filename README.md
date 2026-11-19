@@ -8,8 +8,8 @@ Doctor Tracker API is a production-grade, standalone RESTful backend web service
 
 | Environment | Service Host | Live Endpoint | Status |
 | :--- | :--- | :--- | :--- |
-| **Production API** | Railway | [doctor-tracker-api-production-049aa198.up.railway.app](https://doctor-tracker-api-production-049aa198.up.railway.app) | Live |
-| **Health Check** | Railway | [doctor-tracker-api-production-049aa198.up.railway.app/health](https://doctor-tracker-api-production-049aa198.up.railway.app/health) | Passing |
+| **Production API** | Railway | [doctor-tracker-backend-production.up.railway.app](https://doctor-tracker-backend-production.up.railway.app) | Live |
+| **Health Check** | Railway | [doctor-tracker-backend-production.up.railway.app/health](https://doctor-tracker-backend-production.up.railway.app/health) | Passing |
 
 ---
 
