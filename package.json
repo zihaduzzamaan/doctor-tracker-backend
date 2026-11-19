@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "This directory contains the standalone Node.js and Express REST API server for Doctor Tracker, communicating with MongoDB via Mongoose ODM.",
+  "description": "Standalone Node.js and Express REST API server for Doctor Tracker, communicating with MongoDB via Mongoose ODM.",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
@@ -19,6 +19,8 @@
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.12.2",
+    "rimraf": "^6.1.4",
+    "typescript": "^5.7.3",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -26,9 +28,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.6.6",
-    "rimraf": "^6.1.4",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "@types/node": "^22.13.4",
+    "tsx": "^4.23.15"
   }
 }
