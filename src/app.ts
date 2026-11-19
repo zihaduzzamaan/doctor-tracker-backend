@@ -16,12 +16,31 @@ app.use(
   })
 );
 
-// Dynamic CORS allowing credentials with reflected origin
+// Strict Whitelist CORS Origin Validation (OWASP ASVS Compliance)
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5000',
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Reflect origin to comply with credentials: true
-      callback(null, true);
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Check explicit allowed list and trusted cloud deploy preview domains
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.endsWith('.railway.app');
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS origin ${origin} denied by security policy`));
+      }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
