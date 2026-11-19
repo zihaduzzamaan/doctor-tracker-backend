@@ -8,13 +8,27 @@ import { analyticsRouter } from './routes/analytics.routes.js';
 
 export const app = express();
 
-app.use(helmet());
+// Secure HTTP headers for REST API without breaking browser extensions or JSON CORS
 app.use(
-  cors({
-    origin: '*',
-    credentials: true,
+  helmet({
+    contentSecurityPolicy: false, // Prevents extension content.js conflicts on API responses
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
+
+// Dynamic CORS allowing credentials with reflected origin
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Reflect origin to comply with credentials: true
+      callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
 app.use(express.json());
 
 // Health check endpoint
@@ -46,11 +60,18 @@ app.use((req: Request, res: Response) => {
   });
 });
 
-// Global error handler
+// Centralized server error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('[API Error]:', err);
-  res.status(err.status || 500).json({
+  const status = err.status || 500;
+  const message =
+    status >= 500
+      ? 'Something went wrong on our end. Please try again later.'
+      : err.message || 'Request failed';
+
+  res.status(status).json({
     success: false,
-    message: err.message || 'Internal server error',
+    message,
+    ...(process.env.NODE_ENV !== 'production' && { detail: err.message }),
   });
 });

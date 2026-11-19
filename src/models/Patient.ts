@@ -6,10 +6,11 @@ export interface IPatient extends Document {
   patient_name: string;
   age: number;
   gender: 'male' | 'female' | 'other';
-  phone: string;
+  phone?: string;
   condition: string;
-  status: 'admitted' | 'under_observation' | 'discharged';
+  status: 'admitted' | 'under_observation' | 'observation' | 'discharged';
   admission_date: Date;
+  notes?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,7 +26,7 @@ const patientSchema = new Schema<IPatient>(
     user_id: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
       index: true,
     },
     patient_name: {
@@ -46,7 +47,7 @@ const patientSchema = new Schema<IPatient>(
     },
     phone: {
       type: String,
-      required: true,
+      default: '+1 (555) 010-0000',
       trim: true,
     },
     condition: {
@@ -57,7 +58,7 @@ const patientSchema = new Schema<IPatient>(
     },
     status: {
       type: String,
-      enum: ['admitted', 'under_observation', 'discharged'],
+      enum: ['admitted', 'under_observation', 'observation', 'discharged'],
       default: 'admitted',
       index: true,
     },
@@ -65,6 +66,11 @@ const patientSchema = new Schema<IPatient>(
       type: Date,
       default: Date.now,
       index: true,
+    },
+    notes: {
+      type: String,
+      default: '',
+      trim: true,
     },
   },
   {
