@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
 import { authRouter } from './routes/auth.routes.js';
 import { doctorRouter } from './routes/doctor.routes.js';
 import { patientRouter } from './routes/patient.routes.js';
@@ -49,6 +50,17 @@ app.use(
 );
 
 app.use(express.json());
+
+// NoSQL Injection Defense: Sanitize request body and params (OWASP ASVS / Express 5 compatible)
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.body && typeof req.body === 'object') {
+    mongoSanitize.sanitize(req.body);
+  }
+  if (req.params && typeof req.params === 'object') {
+    mongoSanitize.sanitize(req.params);
+  }
+  next();
+});
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
