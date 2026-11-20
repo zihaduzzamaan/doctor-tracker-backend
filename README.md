@@ -163,6 +163,17 @@ erDiagram
 | **`doctors`** | `hospital`, `specialization`, `createdAt` | `{ createdAt: -1 }` + Text Index | Sub-20ms sorted pagination without in-memory sort |
 | **`patients`** | `doctor_id`, `status`, `admission_date` | Compound `{ doctor_id: 1, status: 1 }` + `{ admission_date: -1 }` | Instant slide-over Patient Drawer caseload retrieval |
 
+### Security & Data Protection Controls
+
+| Security Layer | Implementation Mechanism | Protection Standard |
+| :--- | :--- | :--- |
+| **NoSQL Injection Defense** | `express-mongo-sanitize` stripping `$` operator keys from `req.body` and `req.params` | Prevents operator injection; verified via automated rejection of malicious query payloads |
+| **Server-Side Authorization** | JWT verification middleware (`authenticate`) guarding all clinical routes | Enforces valid Bearer tokens on `/doctors/*`, `/patients/*`, and `/analytics/*` |
+| **Credential Protection** | `bcryptjs` password hashing with 10 salt rounds; excluded via `select('-password')` | Zero plain-text passwords stored; credentials never exposed in API JSON responses |
+| **Input Validation** | Strict Zod schemas validating types, lengths, and constraints before DB calls | Malformed payloads rejected with HTTP 400 before database execution |
+| **Transport & Headers** | `helmet` HTTP headers and strict CORS origin whitelisting | Prevents cross-origin tampering, clickjacking, and unauthorized origin lookups |
+| **Safe Error Handling** | Centralized Express error handler masking stack traces in production | Prevents internal database structure and server footprint leakage to clients |
+
 ---
 
 # 4. Technical Decisions
