@@ -3,7 +3,7 @@ import { Doctor } from '../models/Doctor.js';
 import { Patient } from '../models/Patient.js';
 
 export async function getAnalyticsSummary(req: Request, res: Response): Promise<void> {
-  const [doctorCount, patientAgg] = await Promise.all([
+  const [doctorCount, patientAgg, doctorWorkload] = await Promise.all([
     Doctor.countDocuments(),
     Patient.aggregate([
       {
@@ -42,17 +42,15 @@ export async function getAnalyticsSummary(req: Request, res: Response): Promise<
         },
       },
     ]),
+    Doctor.find()
+      .select('doctor_name specialization active_patient_count')
+      .sort({ active_patient_count: -1 })
+      .limit(8)
+      .lean(),
   ]);
 
   const facet = patientAgg[0] || {};
   const totalPatients = facet.totalPatients?.[0]?.count || 0;
-
-  // Doctors with their active patient counts for workload chart
-  const doctorWorkload = await Doctor.find()
-    .select('doctor_name specialization active_patient_count')
-    .sort({ active_patient_count: -1 })
-    .limit(8)
-    .lean();
 
   res.json({
     success: true,

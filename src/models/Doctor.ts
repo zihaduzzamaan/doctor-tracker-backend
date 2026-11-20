@@ -69,6 +69,9 @@ const doctorSchema = new Schema<IDoctor>(
 // High-performance compound index for multi-field filtering & sorting
 doctorSchema.index({ hospital: 1, specialization: 1, createdAt: -1 });
 
+// Dedicated index for default directory chronological sorting (REC-03)
+doctorSchema.index({ createdAt: -1 });
+
 // Full-text search index across practitioner details
 doctorSchema.index({
   doctor_name: 'text',
